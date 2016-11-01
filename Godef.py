@@ -54,7 +54,15 @@ class GodefCommand(sublime_plugin.WindowCommand):
             for go_path in gopaths:
                 cmdpath = os.path.join(go_path, "bin", binary)
                 if not os.path.isfile(cmdpath):
-                    print('[Godef]WARN: "%s" cmd not found at %s' % (cmd, go_path))
+                    continue
+                else:
+                    found = True
+                    break
+
+            syspaths = os.getenv('PATH').split(os.pathsep)
+            for syspath in syspaths:
+                cmdpath = os.path.join(syspath, binary)
+                if not os.path.isfile(cmdpath):
                     continue
                 else:
                     found = True
@@ -99,6 +107,14 @@ to install them.')
         settings = sublime.load_settings("Godef.sublime-settings")
         gopath = settings.get("gopath", os.getenv('GOPATH'))
         goroot = settings.get("goroot", os.getenv('GOROOT'))
+
+        # compatible multiple gopath. dynamically modified to the current path.
+        curpath=os.getcwd()
+        if curpath.find(gopath)==-1:
+            srcidx=curpath.find('\\src\\')
+            if srcidx!=-1:
+                gopath=curpath[0:srcidx]
+                print('[Godef]WARN: gopath change to "%s"' % gopath)
 
         if self.gopath != gopath or self.goroot != goroot:
             print('[Godef]INFO: settings change, reload conf')
