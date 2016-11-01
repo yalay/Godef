@@ -1,3 +1,7 @@
+# Modified point
+1. support godef or guru put in sys path, not must be put in gopath/bin.（godef和guru不必须放在gotupah/bin,可以放在系统path目录下）
+2. compatible multiple gopath， dynamically modified to the current path。（支持多个gopath，动态读取当前路径，截取src目录之前的部分为当前的gopath）
+
 # Godef
 
 This Sublime Text 2/3 [golang](http://golang.org/) plugin adds a `godef` command which uses [godef](http://godoc.org/github.com/rogpeppe/godef) or [guru](http://godoc.org/golang.org/x/tools/cmd/guru) to find the definition under the cursor.
