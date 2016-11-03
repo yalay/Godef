@@ -112,13 +112,11 @@ to install them.')
         # compatible multiple gopath. dynamically modified to the current path.
         view = self.window.active_view()
         filename = view.file_name()
-        if filename.find(gopath) == -1:
-            srcidx=filename.find('\\src\\')
-            if srcidx != -1:
-                if self.systype == "Windows":
-                    gopath=filename[0:srcidx]+";"+gopath
-                else:
-                    gopath=filename[0:srcidx]+":"+gopath
+        srcpathidx=filename.find('\\src\\')
+        if srcpathidx != -1:
+            curgopath=filename[0:srcpathidx]
+            if gopath.find(curgopath) == -1:
+                gopath=curgopath+os.pathsep+gopath
                 print('[Godef]WARN: gopath change to "%s"' % gopath)
 
         if self.gopath != gopath or self.goroot != goroot:
