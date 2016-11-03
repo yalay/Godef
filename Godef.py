@@ -67,6 +67,7 @@ class GodefCommand(sublime_plugin.WindowCommand):
                 else:
                     found = True
                     break
+
             if not found:
                 print('[Godef]WARN: "%s" cmd is not available.' % cmd)
                 continue
@@ -109,11 +110,15 @@ to install them.')
         goroot = settings.get("goroot", os.getenv('GOROOT'))
 
         # compatible multiple gopath. dynamically modified to the current path.
-        curpath=os.getcwd()
-        if curpath.find(gopath)==-1:
-            srcidx=curpath.find('\\src\\')
-            if srcidx!=-1:
-                gopath=curpath[0:srcidx]
+        view = self.window.active_view()
+        filename = view.file_name()
+        if filename.find(gopath) == -1:
+            srcidx=filename.find('\\src\\')
+            if srcidx != -1:
+                if self.systype == "Windows":
+                    gopath=filename[0:srcidx]+";"+gopath
+                else:
+                    gopath=filename[0:srcidx]+":"+gopath
                 print('[Godef]WARN: gopath change to "%s"' % gopath)
 
         if self.gopath != gopath or self.goroot != goroot:
@@ -134,8 +139,6 @@ to install them.')
         if not self.goroot:
             print("[Godef]WARN: no GOROOT defined in settings")
 
-        view = self.window.active_view()
-        filename = view.file_name()
         select = view.sel()[0]
         select_begin = select.begin()
         select_before = sublime.Region(0, select_begin)
